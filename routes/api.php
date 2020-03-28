@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Server;
 use Illuminate\Http\Request;
 
 /*
@@ -14,5 +15,12 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
+});
+
+Route::namespace('API')->group(function (){
+	Route::get('/servers', 'ServerController@index');
+	Route::get('/servers/{server}', 'ServerController@show');
+	Route::post('/servers/{server}', 'ServerController@store');
+	Route::put('/servers/{server}', 'ServerController@update');
 });
