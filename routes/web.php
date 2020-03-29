@@ -11,10 +11,18 @@
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
+Route::get("/", function () {
+	if (Auth::guest()) {
+	    return redirect()->route("login");
+	}
+
+	return redirect()->route("admin");
 });
 
-Auth::routes();
+Route::get("/login", function () {
+    return view("auth.login");
+});
 
-Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes(["register" => false, "password.request" => false, "reset" => false]);
+
+Route::get("/admin", "Admin\AdminController@index")->name("admin");

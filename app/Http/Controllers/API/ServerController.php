@@ -5,13 +5,14 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Server;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ServerController extends Controller
 {
 	/** Retrieves all servers from the database */
 	public function index()
 	{
-		return Server::all();
+		return ["data" => Server::all()];
 	}
 
 	/**
@@ -35,7 +36,9 @@ class ServerController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		return Server::create($request->all());
+		$server = Server::create($request->all());
+
+		return response()->json($server, Response::HTTP_CREATED);
 	}
 
 	/**
@@ -50,6 +53,6 @@ class ServerController extends Controller
 	{
 		$server->update($request->all());
 
-		return $server;
+		return response()->json($server, Response::HTTP_OK);
 	}
 }

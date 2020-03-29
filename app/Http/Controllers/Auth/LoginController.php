@@ -28,7 +28,7 @@ class LoginController extends Controller
 	 *
 	 * @var string
 	 */
-	protected $redirectTo = '/home';
+	protected $redirectTo = '/admin';
 
 	/**
 	 * Create a new controller instance.
@@ -58,7 +58,7 @@ class LoginController extends Controller
 				$token = $user->createToken("Access Token")->accessToken;
 			}
 
-			return response()->json(["success" => ["token" => $token]], Response::HTTP_OK);
+			return response()->json(["data" => ["token" => $token]], Response::HTTP_OK);
 		}
 
 		return $this->sendFailedLoginResponse($request);
