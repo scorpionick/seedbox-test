@@ -12,13 +12,17 @@
               </button>
             </h3>
           </div>
-
           <div class="card-body">
+            @if($serversDown > 0)
+              <div class="alert alert-warning" role="alert"><i class="fas fa-exclamation-triangle"></i>
+                {{$serversDown}} servers are currently down.
+              </div>
+            @endif
             <table class="table table-bordered table-hover table-striped">
               <thead>
               <th>Name</th>
               <th>Domain</th>
-              <th>Domain</th>
+              <th>Username</th>
               <th>Status</th>
               <th>Actions</th>
               </thead>
@@ -26,8 +30,8 @@
               @foreach($servers as $server)
                 <tr>
                   <td class="align-middle">{{ $server->name }}</td>
-                  <td class="align-middle"></td>
-                  <td class="align-middle"></td>
+                  <td class="align-middle">{{ $server->domain }}</td>
+                  <td class="align-middle">{{ $server->username }}</td>
                   <td class="align-middle{{ $server->status ? "" : " table-danger" }}">{{ $server->status ? "Up" : "Down" }}</td>
                   <td class="align-middle" width="1">
                     <div class="btn-group" role="group" aria-label="Basic example">

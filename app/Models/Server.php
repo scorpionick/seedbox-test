@@ -10,5 +10,5 @@ class Server extends Model
     protected $connection = "server";
 
     /** @var array */
-    protected $fillable = ["name", "status"];
+    protected $fillable = ["name", "status", "domain", "username"];
 }

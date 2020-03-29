@@ -20,11 +20,11 @@ class ServerController extends Controller
 	 * Returns 404 is no match is found
 	 *
 	 * @param Server $server
-	 * @return Server
+	 * @return array
 	 */
 	public function show(Server $server)
 	{
-		return $server;
+		return ["data" => $server];
 	}
 
 	/**
@@ -38,7 +38,13 @@ class ServerController extends Controller
 	{
 		$server = Server::create($request->all());
 
-		return response()->json($server, Response::HTTP_CREATED);
+		return response()->json(
+			[
+				"data"    => $server,
+				"message" => "New server stored successfully."
+			],
+			Response::HTTP_CREATED
+		);
 	}
 
 	/**
@@ -53,6 +59,12 @@ class ServerController extends Controller
 	{
 		$server->update($request->all());
 
-		return response()->json($server, Response::HTTP_OK);
+		return response()->json(
+			[
+				"data"    => $server,
+				"message" => "Server with id {$server->id} was updated successfully."
+			],
+			Response::HTTP_OK
+		);
 	}
 }

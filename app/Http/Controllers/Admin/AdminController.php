@@ -16,6 +16,7 @@ class AdminController extends Controller
 	 */
 	public function __construct()
 	{
+		/** Prevents access by unauthenticated users */
 		$this->middleware('auth');
 	}
 
@@ -33,18 +34,76 @@ class AdminController extends Controller
 			["content-type" => "application/json"]
 		);
 
-		$servers = [];
+		$servers     = collect([]);
+		$serversDown = 0;
 
 		if (Response::HTTP_OK === $res->getStatusCode()) {
 			$body    = $res->getBody();
 			$content = json_decode($body->getContents());
 
 			if (property_exists($content, "data") && count($content->data) > 0) {
-				$servers = $content->data;
+				$servers     = collect($content->data);
+				$serversDown = $servers->where("status", "0")->count();
 			}
 		}
 
+		return view('admin', compact("servers", "serversDown"));
+	}
 
-		return view('admin', ["servers" => $servers]);
+	/**
+	 * Request the API for a server with a given server id
+	 *
+	 * @param Request $request
+	 * @throws \GuzzleHttp\GuzzleException
+	 */
+	public function show(Request $request)
+	{
+		$serverId = $request->query->getInt("server_id");
+
+		if ($serverId === 0) {
+			return;
+		}
+
+		$client = new Client();
+		$res    = $client->request(
+			"GET", "http://seedboxtest.develop/api/servers/{$serverId}",
+			["content-type" => "application/json"]
+		);
+	}
+
+	/**
+	 * Request the API to store a new server with given parameters.
+	 *
+	 * @param Request $request
+	 * @throws \GuzzleHttp\GuzzleException
+	 */
+	public function store(Request $request)
+	{
+		$client = new Client();
+		$res    = $client->request(
+			"POST", "http://seedboxtest.develop/api/servers",
+			["content-type" => "application/json"]
+		);
+	}
+
+	/**
+	 * Request the API to update a server matching the given server id with given parameters.
+	 *
+	 * @param Request $request
+	 * @throws \GuzzleHttp\GuzzleException
+	 */
+	public function edit(Request $request)
+	{
+		$serverId = $request->query->getInt("server_id");
+
+		if ($serverId === 0) {
+			return;
+		}
+
+		$client = new Client();
+		$res    = $client->request(
+			"PUT", "http://seedboxtest.develop/api/servers/{$serverId}",
+			["content-type" => "application/json"]
+		);
 	}
 }

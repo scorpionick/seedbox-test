@@ -13,11 +13,18 @@ class ServersTableSeeder extends Seeder
 	 */
 	public function run()
 	{
+		Server::truncate();
+
+		$factory = Factory::create();
+
 		for ($i = 0; $i <= 25; $i++) {
 			Server::create(
 				[
-					'name'   => "Server {$i}",
-					'status' => array_rand([true, false])
+					"name"     => "Server {$i}",
+					"status"   => array_rand([true, false]),
+					"domain"   => $factory->localIpv4,
+					"username" => $factory->userName,
+					"password" => bcrypt($factory->password),
 				]
 			);
 		}
