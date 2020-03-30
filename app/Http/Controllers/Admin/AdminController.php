@@ -69,6 +69,10 @@ class AdminController extends Controller
 			"GET", "http://seedboxtest.develop/api/servers/{$serverId}",
 			["content-type" => "application/json"]
 		);
+
+		if (Response::HTTP_OK === $res->getStatusCode()) {
+
+		}
 	}
 
 	/**
@@ -84,6 +88,10 @@ class AdminController extends Controller
 			"POST", "http://seedboxtest.develop/api/servers",
 			["content-type" => "application/json"]
 		);
+
+		if (Response::HTTP_CREATED === $res->getStatusCode()) {
+
+		}
 	}
 
 	/**
@@ -105,5 +113,9 @@ class AdminController extends Controller
 			"PUT", "http://seedboxtest.develop/api/servers/{$serverId}",
 			["content-type" => "application/json"]
 		);
+
+		if (Response::HTTP_OK === $res->getStatusCode()) {
+
+		}
 	}
 }
