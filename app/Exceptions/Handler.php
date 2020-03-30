@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;

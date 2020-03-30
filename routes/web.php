@@ -13,16 +13,21 @@
 
 Route::get("/", function () {
 	if (Auth::guest()) {
-	    return redirect()->route("login");
+		return redirect()->route("login");
 	}
 
 	return redirect()->route("admin");
 });
 
 Route::get("/login", function () {
-    return view("auth.login");
+	return view("auth.login");
 });
 
 Auth::routes(["register" => false, "password.request" => false, "reset" => false]);
 
-Route::get("/admin", "Admin\AdminController@index")->name("admin");
+Route::namespace('Admin')->prefix("admin")->group(function () {
+	Route::get('/', 'AdminController@index')->name("admin");
+	Route::get('/servers', 'AdminController@show');
+	Route::post('/servers', 'AdminController@store');
+	Route::put('/servers', 'AdminController@update');
+});
