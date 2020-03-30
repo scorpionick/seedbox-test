@@ -35094,11 +35094,6 @@ $(function () {
   $(document).on("show.bs.modal", "#server-modal", function (event) {
     var modal = $(this);
     var serverId = Number($(event.relatedTarget).data("server-id"));
-
-    if (serverId <= 0) {
-      return;
-    }
-
     var config = new ajaxConfig();
     config.url = "/admin/servers";
     config.data = {

@@ -21,6 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::namespace('API')->group(function (){
 	Route::get('/servers', 'ServerController@index');
 	Route::get('/servers/{server}', 'ServerController@show');
-	Route::post('/servers/{server}', 'ServerController@store');
+	Route::post('/servers', 'ServerController@store');
 	Route::put('/servers/{server}', 'ServerController@update');
 });

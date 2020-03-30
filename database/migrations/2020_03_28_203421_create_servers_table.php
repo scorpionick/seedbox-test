@@ -16,7 +16,7 @@ class CreateServersTable extends Migration
         Schema::connection("server")->create('servers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string("name");
-            $table->string("status");
+            $table->boolean("status");
             $table->timestamps();
         });
     }

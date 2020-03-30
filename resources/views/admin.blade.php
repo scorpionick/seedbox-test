@@ -7,7 +7,11 @@
         <div class="card">
           <div class="card-header">
             <h3>Servers
-              <button class="btn btn-outline-dark float-right" role="button">
+              <button class="btn btn-outline-dark float-right"
+                      role="button"
+                      data-toggle="modal"
+                      data-target="#server-modal"
+                      data-server-id="0">
                 <i class="fas fa-plus"></i> Add a new server
               </button>
             </h3>

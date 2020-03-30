@@ -61,26 +61,27 @@ class AdminController extends Controller
 	 */
 	public function show(Request $request)
 	{
-		$serverId = $request->query->getInt("server_id");
+		$form = view("serverForm");
 
-		if ($serverId === 0) {
-			return response()->json(["success" => false, "message" => "No server id provided."]);;
-		}
-
-		$client = new Client();
-		$res    = $client->request("GET", "http://seedboxtest.develop/api/servers/{$serverId}");
-
-		if (Response::HTTP_OK === $res->getStatusCode()) {
+		try {
+			$serverId = $request->query->getInt("server_id");
+			$client   = new Client();
+			$res      = $client->request("GET", "http://seedboxtest.develop/api/servers/{$serverId}");
 
 			$body    = $res->getBody();
 			$content = json_decode($body->getContents());
-			$form    = "";
 
 			if (property_exists($content, "data")) {
-				$form = view("serverForm", ["server" => $content->data])->render();
+				$form = $form->with(["server" => $content->data]);
 			}
 
-			return response()->json(["success" => true, "form" => $form]);
+			return response()->json(["success" => true, "form" => $form->render()]);
+		} catch (\Exception $exception) {
+			if ($exception->getCode() === Response::HTTP_NOT_FOUND) {
+				return response()->json(["success" => true, "form" => $form->render()]);
+			}
+
+			throw $exception;
 		}
 	}
 
@@ -88,6 +89,7 @@ class AdminController extends Controller
 	 * Request the API to store a new server with given parameters.
 	 *
 	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \GuzzleHttp\GuzzleException
 	 */
 	public function store(Request $request)
@@ -96,7 +98,7 @@ class AdminController extends Controller
 		$res    = $client->request("POST", "http://seedboxtest.develop/api/servers", ["json" => $request->all()]);
 
 		if (Response::HTTP_CREATED === $res->getStatusCode()) {
-
+			return response()->json(["success" => true]);
 		}
 	}
 
