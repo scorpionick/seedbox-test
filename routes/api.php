@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Server;
 use Illuminate\Http\Request;
 
 /*
@@ -14,5 +15,19 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
+});
+
+/**
+ * If Passport would be implemented properly, with right token management I would add middleware('auth:api')
+ * to protect this group with the inner Laravel API mechanic.
+ *
+ * As of now all /api/ routes are not protected successfully and remain open to be able to provide a functional
+ * demo for the test.
+ */
+Route::namespace('API')->group(function (){
+	Route::get('/servers', 'ServerController@index');
+	Route::get('/servers/{server}', 'ServerController@show');
+	Route::post('/servers', 'ServerController@store');
+	Route::put('/servers/{server}', 'ServerController@update');
 });

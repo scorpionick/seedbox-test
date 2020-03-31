@@ -4,29 +4,116 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+require("./bootstrap");
 
-window.Vue = require('vue');
+$(function() {
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
+        }
+    });
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+    /** Default configuration for ajax calls */
+    var ajaxConfig = function() {
+        this.url      = "";
+        this.method   = "GET";
+        this.dataType = "json";
+        this.async    = true;
+        this.data     = {};
+    };
 
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+    /**
+     *
+     * @param config //Instance of ajaxConfig
+     * @returns {*}
+     */
+    function executeAjax(config) {
+        if (typeof config !== "object" || !config instanceof ajaxConfig) {
+            throw "Parameter config must be an instance of ajaxConfig";
+        }
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+        return $.ajax({
+            url: config.url,
+            async: config.async,
+            method: config.method,
+            data: config.data,
+            dataType: config.dataType
+        }).done(function(response) {
+            return response;
+        });
+    }
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+    $(document).on("show.bs.modal", "#server-modal", function(event) {
+        var modal    = $(this);
+        var serverId = Number($(event.relatedTarget).data("server-id"));
+        var config   = new ajaxConfig();
 
-const app = new Vue({
-    el: '#app',
+        config.url  = "/admin/servers";
+        config.data = {"server_id": serverId};
+
+        /** Send request to retrieve the Server form */
+        executeAjax(config).then(function(response) {
+            if (!response.hasOwnProperty("success") || !response.success) {
+                return;
+            }
+
+            if (response.hasOwnProperty("form")) {
+                modal.find("#loader").addClass("d-none");
+                modal.find("#form-container").html(response.form);
+                modal.find("#save-server-config").off("click").on("click", postServerConfiguration);
+            }
+        });
+    }).on("hidden.bs.modal", "#server-modal", function() {
+        $(this).find("#form-container").empty();
+        $(this).find("#loader").removeClass("d-none");
+    });
+
+    /**
+     * Send POST/PUT request to store or update a Server
+     * @param event
+     */
+    function postServerConfiguration(event) {
+        var modal    = $("#server-modal");
+        var form     = $("#server-form");
+
+        var config = new ajaxConfig();
+
+        config.url    = "/admin/servers";
+        config.data   = form.serializeArray();
+        config.method = "POST";
+
+        if (Number(form.find("input[name='server_id']").val()) > 0) {
+            config.method = "PUT";
+        }
+
+        executeAjax(config).then(function(response) {
+            if (!response.hasOwnProperty("success")) {
+                return;
+            }
+
+            if (!response.success && response.hasOwnProperty("form")) {
+                modal.find("#form-container").html(response.form);
+
+                return;
+            }
+
+            if (response.success) {
+                modal.modal("hide");
+                refreshServersTable();
+            }
+        });
+    }
+
+    function refreshServersTable() {
+        var table  = $("#servers-table");
+        var config = new ajaxConfig();
+
+        config.url = "/admin/servers/refresh";
+
+        executeAjax(config).then(function(response) {
+            if (response.hasOwnProperty("table")) {
+                table.replaceWith(response.table);
+            }
+        });
+    }
 });
