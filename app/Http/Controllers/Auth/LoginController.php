@@ -41,26 +41,32 @@ class LoginController extends Controller
 	}
 
 	/**
+	 * Attempt to create and use token with Passport
 	 * @param Request $request
 	 * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
 	 * @throws \Illuminate\Validation\ValidationException
 	 */
-	public function login(Request $request)
-	{
-		$this->validateLogin($request);
+	//public function login(Request $request)
+	//{
+	//	$this->validateLogin($request);
+//
+	//	if ($this->attemptLogin($request)) {
+	//		/** @var User|null $user */
+	//		$user  = $request->user();
+	//		$token = null;
+//
+	//		if ($user) {
+	//			$token = $user->createToken("Access Token")->accessToken;
+	//			$user->withAccessToken($token);
+	//			$request->header("Accept", "application/json");
+	//			$request->header("Authorization", "Bearer {$token}");
+	//		}
+//
+//
+	//		return $this->sendLoginResponse($request);
+	//	}
+//
+	//	return $this->sendFailedLoginResponse($request);
+	//}
 
-		if ($this->attemptLogin($request)) {
-			/** @var User|null $user */
-			$user  = $request->user();
-			$token = null;
-
-			if ($user) {
-				$token = $user->createToken("Access Token")->accessToken;
-			}
-
-			return response()->json(["data" => ["token" => $token]], Response::HTTP_OK);
-		}
-
-		return $this->sendFailedLoginResponse($request);
-	}
 }

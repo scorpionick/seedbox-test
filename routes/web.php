@@ -28,6 +28,7 @@ Auth::routes(["register" => false, "password.request" => false, "reset" => false
 Route::namespace('Admin')->prefix("admin")->group(function () {
 	Route::get('/', 'AdminController@index')->name("admin");
 	Route::get('/servers', 'AdminController@show');
+	Route::get('/servers/refresh', 'AdminController@refresh');
 	Route::post('/servers', 'AdminController@store');
 	Route::put('/servers', 'AdminController@update');
 });

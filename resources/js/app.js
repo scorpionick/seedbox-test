@@ -74,11 +74,7 @@ $(function() {
      */
     function postServerConfiguration(event) {
         var modal    = $("#server-modal");
-        var saveBtn  = $(event.target);
-        var saveText = saveBtn.text();
         var form     = $("#server-form");
-        saveBtn.html($("<i class='fas fa-spinner fa-pulse'>"));
-        saveBtn.prop("disabled", true);
 
         var config = new ajaxConfig();
 
@@ -103,9 +99,21 @@ $(function() {
 
             if (response.success) {
                 modal.modal("hide");
+                refreshServersTable();
             }
-        }).then(function() {
-            saveBtn.prop("disabled", false).html(saveText);
+        });
+    }
+
+    function refreshServersTable() {
+        var table  = $("#servers-table");
+        var config = new ajaxConfig();
+
+        config.url = "/admin/servers/refresh";
+
+        executeAjax(config).then(function(response) {
+            if (response.hasOwnProperty("table")) {
+                table.replaceWith(response.table);
+            }
         });
     }
 });

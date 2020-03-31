@@ -7,6 +7,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class AdminController extends Controller
 {
@@ -22,33 +24,40 @@ class AdminController extends Controller
 	}
 
 	/**
-	 * Show the application dashboard.
+	 * Show the admin home page
 	 *
 	 * @return \Illuminate\Contracts\Support\Renderable
 	 * @throws \GuzzleHttp\GuzzleException
+	 * @throws \Throwable
 	 */
 	public function index()
 	{
-		$client = new Client();
-		$res    = $client->request(
-			"GET", "http://seedboxtest.develop/api/servers",
-			["content-type" => "application/json"]
-		);
+		$servers     = $this->retrieveAllServers();
+		$serversDown = $servers->where("status", "0")->count();
 
-		$servers     = collect([]);
-		$serversDown = 0;
+		return view('admin', compact("serversDown", "servers"));
+	}
 
-		if (Response::HTTP_OK === $res->getStatusCode()) {
-			$body    = $res->getBody();
-			$content = json_decode($body->getContents());
-
-			if (property_exists($content, "data") && count($content->data) > 0) {
-				$servers     = collect($content->data);
-				$serversDown = $servers->where("status", "0")->count();
-			}
+	/**
+	 * Show the admin home page
+	 *
+	 * @param Request $request
+	 * @return \Illuminate\Contracts\Support\Renderable
+	 * @throws \GuzzleHttp\GuzzleException
+	 * @throws \Throwable
+	 */
+	public function refresh(Request $request)
+	{
+		if ($request->ajax()) {
+			return response()->json(
+				[
+					"table" => view("serversTable", ["servers" => $this->retrieveAllServers()])->render()
+				]
+			);
 		}
 
-		return view('admin', compact("servers", "serversDown"));
+		/** If Request is not ajax just redirect to home admin */
+		return redirect()->route("admin");
 	}
 
 	/**
@@ -91,15 +100,22 @@ class AdminController extends Controller
 	 * @param Request $request
 	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \GuzzleHttp\GuzzleException
+	 * @throws \Throwable
 	 */
 	public function store(Request $request)
 	{
-		$client = new Client();
-		$res    = $client->request("POST", "http://seedboxtest.develop/api/servers", ["json" => $request->all()]);
+		try {
+			$client = new Client();
+			$res    = $client->request("POST", "http://seedboxtest.develop/api/servers", ["json" => $request->all()]);
 
-		if (Response::HTTP_CREATED === $res->getStatusCode()) {
-			return response()->json(["success" => true]);
+			if (Response::HTTP_CREATED === $res->getStatusCode()) {
+				return response()->json(["success" => true]);
+			}
+		} catch (BadResponseException $exception) {
+			return $this->formErrorResponse($exception);
 		}
+
+		return response()->json(["success" => false]);
 	}
 
 	/**
@@ -124,14 +140,15 @@ class AdminController extends Controller
 				"PUT", "http://seedboxtest.develop/api/servers/{$serverId}",
 				["json" => $request->all()]
 			);
+
+			if (Response::HTTP_OK === $res->getStatusCode()) {
+				return response()->json(["success" => true]);
+			}
 		} catch (BadResponseException $exception) {
 			return $this->formErrorResponse($exception);
 		}
 
-
-		if (Response::HTTP_OK === $res->getStatusCode()) {
-			return response()->json(["success" => true]);
-		}
+		return response()->json(["success" => false]);
 	}
 
 	/**
@@ -151,5 +168,29 @@ class AdminController extends Controller
 		}
 
 		throw $exception;
+	}
+
+	/**
+	 * Send request to API to retrieve all servers
+	 *
+	 * @return \Illuminate\Support\Collection
+	 * @throws \GuzzleHttp\GuzzleException
+	 */
+	protected function retrieveAllServers()
+	{
+		$servers = collect([]);
+		$client  = new Client();
+		$res     = $client->request("GET", "http://seedboxtest.develop/api/servers");
+
+		if (Response::HTTP_OK === $res->getStatusCode()) {
+			$body    = $res->getBody();
+			$content = json_decode($body->getContents());
+
+			if ($content && property_exists($content, "data") && count($content->data) > 0) {
+				$servers = collect($content->data);
+			}
+		}
+
+		return $servers;
 	}
 }

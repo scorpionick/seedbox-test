@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * The current API class is currently not secured what so ever. Lack of knowledge in API creation and consumption to secure this
+ * properly with oAuth2 and token mechanics.
+ *
+ * Class ServerController
+ * @package App\Http\Controllers\API
+ */
 class ServerController extends Controller
 {
 	/** Retrieves all servers from the database */

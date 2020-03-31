@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
@@ -34,6 +35,7 @@ class Handler extends ExceptionHandler
 	 *
 	 * @param  \Exception $exception
 	 * @return void
+	 * @throws Exception
 	 */
 	public function report(Exception $exception)
 	{
