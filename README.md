@@ -42,7 +42,7 @@ Une gestion d'erreur plus efficace aurait pu être mis en place.
 <h1> Instruction </h1>
 <ol>
 <li>Cloner le repository vers un environnement.</li>
-<li>git pull develop (Pull request vers master pour voir les différences sur GIT)</li>
+<li>git checkout develop (Pull request vers master pour voir les différences sur GIT)</li>
 <li>Changer la valeur de APP_URL dans .env au besoin.</li>
 <li>Changer les valeurs de connection de BD dans .env au besoin.</li>
 <li>composer Install</li>
