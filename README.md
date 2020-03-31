@@ -13,7 +13,10 @@ BD 2: Les "serveurs".
 La zone administrative est protéger par la méchanique d'autentification de Laravel.
 
 Dans l'optique où oAuth serait fonctionnel, une méthodologie de Encrypted JSON Web Token aurait pu/du être utilisé.
+
 Pour simplifié le développement local je ne me suis pas attardé sur la connection HTTPS qui serait essentielle en production.
+
+Une gestion d'erreur plus efficace aurait pu être mis en place.
 
 <h1>Requirements</h1>
 <b>Environnement</b>
@@ -39,9 +42,12 @@ Pour simplifié le développement local je ne me suis pas attardé sur la connec
 <h1> Instruction </h1>
 <ol>
 <li>Cloner le repository vers un environnement.</li>
+<li>git pull develop (Pull request vers master pour voir les différences sur GIT)</li>
 <li>Changer la valeur de APP_URL dans .env au besoin.</li>
 <li>Changer les valeurs de connection de BD dans .env au besoin.</li>
 <li>composer Install</li>
 <li>npm install</li>
 <li>npm run dev</li>
+<li>Les dumps de BD sont dans database/dumps</li>
+<li>User: user@seedbox.com, Pass: user</li>
 </ol>
