@@ -50,4 +50,5 @@ Une gestion d'erreur plus efficace aurait pu être mis en place.
 <li>npm run dev</li>
 <li>Les dumps de BD sont dans database/dumps</li>
 <li>User: user@seedbox.com, Pass: user</li>
+<li>Run vendor/bin/phpunit.bat pour exécuter les tests unitaires</li>
 </ol>
